@@ -96,10 +96,9 @@ $input = $json->decode($raw);
 if (isset($config['general.engine'])) {
 	$spellchecker = new $config['general.engine']($config);
 	$result = call_user_func_array(array($spellchecker, $input['method']), $input['params']);
-} else {
-//	die('{"result":null,"id":null,"error":{"errstr":"You must choose an spellchecker engine in the config.php file.","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
-	die('{"error":"You must choose spellchecker engine in the config.php file."}');
-}
+} else
+	die('{"result":null,"id":null,"error":{"errstr":"You must choose an spellchecker engine in the config.php file.","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
+
 // Request and response id should always be the same
 $output = array(
 	"id" => $input->id,
