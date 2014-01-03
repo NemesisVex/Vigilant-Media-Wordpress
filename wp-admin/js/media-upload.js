@@ -6,21 +6,24 @@ var wpActiveEditor, send_to_editor;
 send_to_editor = function(h) {
 	var ed, mce = typeof(tinymce) != 'undefined', qt = typeof(QTags) != 'undefined';
 
-	if ( ! wpActiveEditor ) {
+	if ( !wpActiveEditor ) {
 		if ( mce && tinymce.activeEditor ) {
 			ed = tinymce.activeEditor;
 			wpActiveEditor = ed.id;
-		} else if ( ! qt ) {
+		} else if ( !qt ) {
 			return false;
 		}
 	} else if ( mce ) {
-		ed = tinymce.get( wpActiveEditor );
+		if ( tinymce.activeEditor && (tinymce.activeEditor.id == 'mce_fullscreen' || tinymce.activeEditor.id == 'wp_mce_fullscreen') )
+			ed = tinymce.activeEditor;
+		else
+			ed = tinymce.get(wpActiveEditor);
 	}
 
-	if ( ed && ! ed.isHidden() ) {
+	if ( ed && !ed.isHidden() ) {
 		// restore caret position on IE
-	//	if ( tinymce.isIE && ed.windowManager.insertimagebookmark )
-	//		ed.selection.moveToBookmark(ed.windowManager.insertimagebookmark);
+		if ( tinymce.isIE && ed.windowManager.insertimagebookmark )
+			ed.selection.moveToBookmark(ed.windowManager.insertimagebookmark);
 
 		if ( h.indexOf('[caption') !== -1 ) {
 			if ( ed.wpSetImgCaption )
@@ -75,7 +78,7 @@ var tb_position;
 	};
 
 	$(window).resize(function(){ tb_position(); });
-/*
+
 	// store caret position in IE
 	$(document).ready(function($){
 		$('a.thickbox').click(function(){
@@ -87,5 +90,5 @@ var tb_position;
 			}
 		});
 	});
-*/
+
 })(jQuery);
