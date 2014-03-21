@@ -7,7 +7,7 @@
 						<?php if ( is_single() && ! is_page() ) : ?>
 						By <a href="<?php echo esc_html(get_author_posts_url( get_the_author_meta( 'ID' ))); ?>"><?php echo esc_html(get_the_author()); ?></a><br/>
 						<?php endif; ?>
-						<?php the_category( ', ' ); ?><br/>
+						<?php the_category( ', ', 'multiple' ); ?><br/>
 					</div>
 
 					<div class="entry-content">
