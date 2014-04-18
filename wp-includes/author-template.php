@@ -310,6 +310,8 @@ function get_author_posts_url($author_id, $author_nicename = '') {
  * or as a string.</li>
  * <li>html (bool) (true): Whether to list the items in html form or plaintext.
  * </li>
+ * <li>exclude (array): Array of user IDs to explicitly exclude.</li>
+ * <li>include (array): Array of user IDs to explicitly include.</li>
  * </ul>
  *
  * @link http://codex.wordpress.org/Template_Tags/wp_list_authors
@@ -325,7 +327,7 @@ function wp_list_authors($args = '') {
 		'optioncount' => false, 'exclude_admin' => true,
 		'show_fullname' => false, 'hide_empty' => true,
 		'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true,
-		'style' => 'list', 'html' => true
+		'style' => 'list', 'html' => true, 'exclude' => '', 'include' => ''
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -333,7 +335,7 @@ function wp_list_authors($args = '') {
 
 	$return = '';
 
-	$query_args = wp_array_slice_assoc( $args, array( 'orderby', 'order', 'number' ) );
+	$query_args = wp_array_slice_assoc( $args, array( 'orderby', 'order', 'number', 'exclude', 'include' ) );
 	$query_args['fields'] = 'ids';
 	$authors = get_users( $query_args );
 
@@ -377,20 +379,18 @@ function wp_list_authors($args = '') {
 				$link .= '(';
 			}
 
-			$link .= '<a href="' . get_author_feed_link( $author->ID ) . '"';
+			$link .= '<a href="' . get_author_feed_link( $author->ID, $feed_type ) . '"';
 
-			$alt = $title = '';
+			$alt = '';
 			if ( !empty( $feed ) ) {
-				$title = ' title="' . esc_attr( $feed ) . '"';
 				$alt = ' alt="' . esc_attr( $feed ) . '"';
 				$name = $feed;
-				$link .= $title;
 			}
 
 			$link .= '>';
 
 			if ( !empty( $feed_image ) )
-				$link .= '<img src="' . esc_url( $feed_image ) . '" style="border: none;"' . $alt . $title . ' />';
+				$link .= '<img src="' . esc_url( $feed_image ) . '" style="border: none;"' . $alt . ' />';
 			else
 				$link .= $name;
 
