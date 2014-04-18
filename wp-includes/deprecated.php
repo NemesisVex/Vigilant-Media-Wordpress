@@ -1675,8 +1675,6 @@ function the_author_ID() {
  * dots added to the end. If there is content left over, then dots will be added
  * and the rest of the content will be removed.
  *
- * @package WordPress
- * @subpackage Feed
  * @since 0.71
  * @uses apply_filters() Calls 'the_content_rss' on the content before processing.
  *
@@ -3389,4 +3387,52 @@ function wp_convert_bytes_to_hr( $bytes ) {
 function _search_terms_tidy( $t ) {
 	_deprecated_function( __FUNCTION__, '3.7' );
 	return trim( $t, "\"'\n\r " );
+}
+
+/**
+ * Determine if TinyMCE is available.
+ *
+ * Checks to see if the user has deleted the tinymce files to slim down
+ * their WordPress install.
+ *
+ * @since 2.1.0
+ * @deprecated 3.9.0
+ *
+ * @return bool Whether TinyMCE exists.
+ */
+function rich_edit_exists() {
+	global $wp_rich_edit_exists;
+	_deprecated_function( __FUNCTION__, '3.9' );
+
+	if ( ! isset( $wp_rich_edit_exists ) )
+		$wp_rich_edit_exists = file_exists( ABSPATH . WPINC . '/js/tinymce/tinymce.js' );
+
+	return $wp_rich_edit_exists;
+}
+
+/**
+ * Old callback for tag link tooltips.
+ *
+ * @since 2.7.0
+ * @deprecated 3.9.0
+ * @access private
+ */
+function default_topic_count_text( $count ) {
+	return $count;
+}
+
+/**
+ * Formerly used to escape strings before inserting into the DB.
+ *
+ * Has not performed this function for many, many years. Use wpdb::prepare() instead.
+ *
+ * @since 0.71
+ * @deprecated 3.9.0
+ *
+ * @param string $content The text to format.
+ * @return string The very same text.
+ */
+function format_to_post( $content ) {
+	_deprecated_function( __FUNCTION__, '3.9' );
+	return $content;
 }
