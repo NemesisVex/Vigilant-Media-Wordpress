@@ -151,6 +151,10 @@ function shortcode_exists( $tag ) {
  * @return boolean
  */
 function has_shortcode( $content, $tag ) {
+	if ( false === strpos( $content, '[' ) ) {
+		return false;
+	}
+
 	if ( shortcode_exists( $tag ) ) {
 		preg_match_all( '/' . get_shortcode_regex() . '/s', $content, $matches, PREG_SET_ORDER );
 		if ( empty( $matches ) )
@@ -180,6 +184,10 @@ function has_shortcode( $content, $tag ) {
  */
 function do_shortcode($content) {
 	global $shortcode_tags;
+
+	if ( false === strpos( $content, '[' ) ) {
+		return $content;
+	}
 
 	if (empty($shortcode_tags) || !is_array($shortcode_tags))
 		return $content;
@@ -367,6 +375,10 @@ function shortcode_atts( $pairs, $atts, $shortcode = '' ) {
  */
 function strip_shortcodes( $content ) {
 	global $shortcode_tags;
+
+	if ( false === strpos( $content, '[' ) ) {
+		return $content;
+	}
 
 	if (empty($shortcode_tags) || !is_array($shortcode_tags))
 		return $content;
