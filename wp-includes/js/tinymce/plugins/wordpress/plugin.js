@@ -1,4 +1,8 @@
-/* global tinymce, autosave, getUserSetting, setUserSetting, switchEditors */
+/* global tinymce, getUserSetting, setUserSetting */
+
+// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
+tinymce.ui.FloatPanel.zIndex = 100100;
+
 tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	var DOM = tinymce.DOM, wpAdvButton, modKey, style,
 		last = 0;
@@ -10,7 +14,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 		initial = ( state === 'hide' );
 
 		if ( editor.theme.panel ) {
-			toolbars = editor.theme.panel.find('.toolbar');
+			toolbars = editor.theme.panel.find('.toolbar:not(.menubar)');
 		}
 
 		if ( ! toolbars || toolbars.length < 2 || ( state === 'hide' && ! toolbars[1].visible() ) ) {
@@ -38,10 +42,10 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 			DOM.setStyle( iframe, 'height', iframe.clientHeight + pixels ); // Resize iframe
 
 			if ( state === 'hide' ) {
-				setUserSetting('hidetb', '1');
+				setUserSetting('hidetb', '0');
 				wpAdvButton && wpAdvButton.active( false );
 			} else {
-				setUserSetting('hidetb', '0');
+				setUserSetting('hidetb', '1');
 				wpAdvButton && wpAdvButton.active( true );
 			}
 		}
@@ -53,12 +57,13 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 		cmd: 'WP_Adv',
 		onPostRender: function() {
 			wpAdvButton = this;
+			wpAdvButton.active( getUserSetting( 'hidetb' ) === '1' ? true : false );
 		}
 	});
 
 	// Hide the toolbars after loading
 	editor.on( 'PostRender', function() {
-		if ( getUserSetting('hidetb', '1') === '1' ) {
+		if ( getUserSetting('hidetb', '0') === '0' ) {
 			toggleToolbars( 'hide' );
 		}
 	});
@@ -136,10 +141,12 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 		tag = tag || 'more';
 		classname += ' mce-wp-' + tag;
 		title = tag === 'more' ? 'More...' : 'Next Page';
-		html = '<img src="' + tinymce.Env.transparentSrc + '" title="' + title + '" class="' + classname + '" data-mce-resize="false" data-mce-placeholder="1" />';
+		html = '<img src="' + tinymce.Env.transparentSrc + '" title="' + title + '" class="' + classname + '" ' +
+			'data-mce-resize="false" data-mce-placeholder="1" />';
 
-		if ( node.nodeName === 'BODY' ) {
-			editor.insertContent( '<p>' + html + '</p>' );
+		// Most common case
+		if ( node.nodeName === 'BODY' || ( node.nodeName === 'P' && node.parentNode.nodeName === 'BODY' ) ) {
+			editor.insertContent( html );
 			return;
 		}
 
@@ -153,8 +160,18 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 		}, editor.getBody() );
 
 		if ( parent ) {
-			dom.insertAfter( dom.create( 'p', null, html ), parent );
+			if ( parent.nodeName === 'P' ) {
+				parent.appendChild( dom.create( 'p', null, html ).firstChild );
+			} else {
+				dom.insertAfter( dom.create( 'p', null, html ), parent );
+			}
+
+			editor.nodeChanged();
 		}
+	});
+
+	editor.addCommand( 'WP_Code', function() {
+		editor.formatter.toggle('code');
 	});
 
 	editor.addCommand( 'WP_Page', function() {
@@ -164,9 +181,11 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	editor.addCommand( 'WP_Help', function() {
 		editor.windowManager.open({
 			url: tinymce.baseURL + '/wp-mce-help.php',
+			title: 'Keyboard Shortcuts',
 			width: 450,
 			height: 420,
-			inline: 1
+			inline: 1,
+			classes: 'wp-help'
 		});
 	});
 
@@ -192,8 +211,14 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	});
 
 	editor.addButton( 'wp_help', {
-		tooltip: 'Help',
+		tooltip: 'Keyboard Shortcuts',
 		cmd: 'WP_Help'
+	});
+
+	editor.addButton( 'wp_code', {
+		tooltip: 'Code',
+		cmd: 'WP_Code',
+		stateSelector: 'code'
 	});
 
 	// Menubar
@@ -201,6 +226,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	if ( typeof wp !== 'undefined' && wp.media && wp.media.editor ) {
 		editor.addMenuItem( 'add_media', {
 			text: 'Add Media',
+			icon: 'wp-media-library',
 			context: 'insert',
 			cmd: 'WP_Medialib'
 		});
@@ -209,6 +235,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	// Insert "Read More..."
 	editor.addMenuItem( 'wp_more', {
 		text: 'Insert Read More tag',
+		icon: 'wp_more',
 		context: 'insert',
 		onclick: function() {
 			editor.execCommand( 'WP_More', 'more' );
@@ -218,6 +245,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	// Insert "Next Page"
 	editor.addMenuItem( 'wp_page', {
 		text: 'Page break',
+		icon: 'wp_page',
 		context: 'insert',
 		onclick: function() {
 			editor.execCommand( 'WP_More', 'nextpage' );
@@ -246,10 +274,12 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	editor.on( 'init', function() {
 		var env = tinymce.Env,
 			bodyClass = ['mceContentBody'], // back-compat for themes that use this in editor-style.css...
-			body = editor.getBody();
+			doc = editor.getDoc(),
+			dom = editor.dom;
 
 		if ( editor.getParam( 'directionality' ) === 'rtl' ) {
 			bodyClass.push('rtl');
+			dom.setAttrib( doc.documentElement, 'dir', 'rtl' );
 		}
 
 		if ( env.ie ) {
@@ -266,7 +296,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 
 		tinymce.each( bodyClass, function( cls ) {
 			if ( cls ) {
-				editor.dom.addClass( body, cls );
+				dom.addClass( doc.body, cls );
 			}
 		});
 
@@ -278,10 +308,23 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 				e.content = e.content.replace(/<\/(p|div|ul|ol|dl|table|blockquote|h[1-6]|fieldset|pre|address)>\s*<\/p>/gi, '</$1>');
 			}
 		});
+
+		if ( typeof window.jQuery !== 'undefined' ) {
+			window.jQuery( document ).triggerHandler( 'tinymce-editor-init', [editor] );
+		}
+
+		if ( window.tinyMCEPreInit && window.tinyMCEPreInit.dragDropUpload ) {
+			dom.bind( doc, 'dragstart dragend dragover drop', function( event ) {
+				if ( typeof window.jQuery !== 'undefined' ) {
+					// Trigger the jQuery handlers.
+					window.jQuery( document ).triggerHandler( event.type );
+				}
+			});
+		}
 	});
 
 	// Word count
-	if ( typeof jQuery !== 'undefined' ) {
+	if ( typeof window.jQuery !== 'undefined' ) {
 		editor.on( 'keyup', function( e ) {
 			var key = e.keyCode || e.charCode;
 
@@ -290,7 +333,7 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 			}
 
 			if ( 13 === key || 8 === last || 46 === last ) {
-				jQuery(document).triggerHandler( 'wpcountwords', [ editor.getContent({ format : 'raw' }) ] );
+				window.jQuery( document ).triggerHandler( 'wpcountwords', [ editor.getContent({ format : 'raw' }) ] );
 			}
 
 			last = key;
@@ -307,9 +350,14 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 		// Keep empty paragraphs :(
 		e.content = e.content.replace( /<p>(<br ?\/?>|\u00a0|\uFEFF)?<\/p>/g, '<p>&nbsp;</p>' );
 
-		if ( editor.getParam( 'wpautop', true ) && typeof switchEditors !== 'undefined' ) {
-			e.content = switchEditors.pre_wpautop( e.content );
+		if ( editor.getParam( 'wpautop', true ) && typeof window.switchEditors !== 'undefined' ) {
+			e.content = window.switchEditors.pre_wpautop( e.content );
 		}
+	});
+
+	editor.on( 'preInit', function() {
+		// Don't replace <i> with <em> and <b> with <strong> and don't remove them when empty
+		editor.schema.addValidElements( '@[id|accesskey|class|dir|lang|style|tabindex|title|contenteditable|draggable|dropzone|hidden|spellcheck|translate],i,b' );
 	});
 
 	// Add custom shortcuts
@@ -323,7 +371,6 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	editor.addShortcut( modKey + '+u', '', 'InsertUnorderedList' );
 	editor.addShortcut( modKey + '+o', '', 'InsertOrderedList' );
 	editor.addShortcut( modKey + '+n', '', 'mceSpellCheck' );
-	editor.addShortcut( modKey + '+a', '', 'WP_Link' );
 	editor.addShortcut( modKey + '+s', '', 'unlink' );
 	editor.addShortcut( modKey + '+m', '', 'WP_Medialib' );
 	editor.addShortcut( modKey + '+z', '', 'WP_Adv' );
@@ -331,9 +378,10 @@ tinymce.PluginManager.add( 'wordpress', function( editor ) {
 	editor.addShortcut( modKey + '+d', '', 'Strikethrough' );
 	editor.addShortcut( modKey + '+h', '', 'WP_Help' );
 	editor.addShortcut( modKey + '+p', '', 'WP_Page' );
+	editor.addShortcut( modKey + '+x', '', 'WP_Code' );
 	editor.addShortcut( 'ctrl+s', '', function() {
-		if ( typeof autosave === 'function' ) {
-			autosave();
+		if ( typeof wp !== 'undefined' && wp.autosave ) {
+			wp.autosave.server.triggerSave();
 		}
 	});
 

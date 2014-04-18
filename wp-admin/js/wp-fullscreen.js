@@ -1,11 +1,16 @@
-/* global ajaxurl, deleteUserSetting, setUserSetting, switchEditors, tinymce, tinyMCEPreInit, wp_fullscreen_settings, wpActiveEditor:true, wpLink */
+/* global deleteUserSetting, setUserSetting, switchEditors, tinymce, tinyMCEPreInit */
 /**
  * PubSub
  *
  * A lightweight publish/subscribe implementation.
  * Private use only!
  */
-var PubSub, fullscreen, wptitlehint;
+( function( $, window ) {
+	var api, ps, s, toggleUI, uiTimer, PubSub,
+		uiScrollTop = 0,
+		transitionend = 'transitionend webkitTransitionEnd',
+		$body = $( document.body ),
+		$document = $( document );
 
 PubSub = function() {
 	this.topics = {};
@@ -83,26 +88,27 @@ PubSub.prototype.publish = function( topic, args ) {
 		toolbar_shown : false
 	};
 
+	function _hideUI() {
+		$body.removeClass('wp-dfw-show-ui');
+	}
+
 	/**
 	 * Bounder
 	 *
 	 * Creates a function that publishes start/stop topics.
 	 * Used to throttle events.
 	 */
-	bounder = api.bounder = function( start, stop, delay, e ) {
-		var y, top;
+	toggleUI = api.toggleUI = function( show ) {
+		clearTimeout( uiTimer );
 
-		delay = delay || 1250;
+		if ( ! $body.hasClass('wp-dfw-show-ui') || show === 'show' ) {
+			$body.addClass('wp-dfw-show-ui');
+		} else if ( show !== 'autohide' ) {
+			$body.removeClass('wp-dfw-show-ui');
+		}
 
-		if ( e ) {
-			y = e.pageY || e.clientY || e.offsetY;
-			top = $(document).scrollTop();
-
-			if ( !e.isDefaultPrevented ) // test if e ic jQuery normalized
-				y = 135 + y;
-
-			if ( y - top > 120 )
-				return;
+		if ( show === 'autohide' ) {
+			uiTimer = setTimeout( _hideUI, 2000 );
 		}
 
 		if ( block )
@@ -135,7 +141,9 @@ PubSub.prototype.publish = function( topic, args ) {
 	 * @param string mode Optional. Switch to the given mode before opening.
 	 */
 	api.on = function() {
-		if ( s.visible )
+		var id, $dfwWrap, titleId;
+
+		if ( s.visible ) {
 			return;
 
 		// Settings can be added or changed by defining "wp_fullscreen_settings" JS object.
@@ -206,8 +214,20 @@ PubSub.prototype.publish = function( topic, args ) {
 	 */
 
 	api.save = function() {
-		var hidden = $('#hiddenaction'), old = hidden.val(), spinner = $('#wp-fullscreen-save .spinner'),
-			message = $('#wp-fullscreen-save span');
+		var $hidden = $('#hiddenaction'),
+			oldVal = $hidden.val(),
+			$spinner = $('#wp-fullscreen-save .spinner'),
+			$saveMessage = $('#wp-fullscreen-save .wp-fullscreen-saved-message'),
+			$errorMessage = $('#wp-fullscreen-save .wp-fullscreen-error-message');
+
+		$spinner.show();
+		$errorMessage.hide();
+		$saveMessage.hide();
+		$hidden.val('wp-fullscreen-save-post');
+
+		if ( s.editor && ! s.editor.isHidden() ) {
+			s.editor.save();
+		}
 
 		spinner.show();
 		api.savecontent();
@@ -227,8 +247,21 @@ PubSub.prototype.publish = function( topic, args ) {
 
 		}, 'json');
 
-		hidden.val(old);
-	};
+		if ( pixels && pixels.toString().indexOf('%') !== -1 ) {
+			s.$editorContainer.css( 'width', pixels );
+			s.$statusbar.css( 'width', pixels );
+
+			if ( s.$dfwTitle ) {
+				s.$dfwTitle.css( 'width', pixels );
+			}
+			return;
+		}
+
+		if ( ! pixels ) {
+			// Reset to theme width
+			width = $('#wp-fullscreen-body').data('theme-width') || 800;
+			s.$editorContainer.width( width );
+			s.$statusbar.width( width );
 
 	api.savecontent = function() {
 		var ed, content;
@@ -262,7 +295,8 @@ PubSub.prototype.publish = function( topic, args ) {
 			return;
 		}
 
-		w = n + w;
+		s.$editorContainer.width( width );
+		s.$statusbar.width( width );
 
 		if ( w < 200 || w > 1200 ) // sanity check
 			return;
@@ -288,13 +322,10 @@ PubSub.prototype.publish = function( topic, args ) {
 		s.toolbars.removeClass('fade-300');
 	});
 
-	ps.subscribe( 'toolbarHidden', function() {
-		s.toolbars.removeClass('fade-1000');
-		s.toolbar_shown = false;
-	});
-
-	ps.subscribe( 'show', function() { // This event occurs before the overlay blocks the UI.
-		var title;
+	// This event occurs while the overlay blocks the UI.
+	ps.subscribe( 'showing', function() {
+		$body.addClass( 'wp-fullscreen-active' );
+		s.$dfwWrap.addClass( 'wp-fullscreen-wrap' );
 
 		if ( s.title_id ) {
 			title = $('#wp-fullscreen-title').val( $('#' + s.title_id).val() );
@@ -303,7 +334,8 @@ PubSub.prototype.publish = function( topic, args ) {
 
 		$('#wp-fullscreen-save input').attr( 'title',  $('#last-edit').text() );
 
-		s.textarea_obj.value = s.qt_canvas.value;
+		// Show the UI for 2 sec. when opening
+		toggleUI('autohide');
 
 		if ( s.has_tinymce && s.mode === 'tinymce' )
 			tinymce.execCommand('wpFullScreenInit');
@@ -315,11 +347,11 @@ PubSub.prototype.publish = function( topic, args ) {
 		$( document.body ).addClass( 'fullscreen-active' );
 		api.refresh_buttons();
 
-		$( document ).bind( 'mousemove.fullscreen', function(e) { bounder( 'showToolbar', 'hideToolbar', 2000, e ); } );
-		bounder( 'showToolbar', 'hideToolbar', 2000 );
-
-		api.bind_resize();
-		setTimeout( api.resize_textarea, 200 );
+		if ( 'ontouchstart' in window ) {
+			api.dfwWidth( '90%' );
+		} else {
+			api.dfwWidth( $( '#wp-fullscreen-body' ).data('dfw-width') || 800, true );
+		}
 
 		// scroll to top so the user is not disoriented
 		scrollTo(0, 0);
@@ -367,14 +399,15 @@ PubSub.prototype.publish = function( topic, args ) {
 			switchEditors.go(s.editor_id, 'html');
 		}
 
-		// Save content must be after switchEditors or content will be overwritten. See #17229.
-		api.savecontent();
+	ps.subscribe( 'hiding', function() { // This event occurs while the overlay blocks the DFW UI.
+		$body.removeClass( 'wp-fullscreen-active' );
 
 		$( document ).unbind( '.fullscreen' );
 		$(s.textarea_obj).unbind('.grow');
 
-		if ( s.has_tinymce && s.mode === 'tinymce' )
-			tinymce.execCommand('wpFullScreenSave');
+		s.$dfwWrap.removeClass( 'wp-fullscreen-wrap' );
+		s.$editorContainer.css( 'width', '' );
+		s.$dfwTextarea.add( '#' + s.id + '_ifr' ).height( s.origHeight );
 
 		if ( s.title_id )
 			set_title_hint( $('#' + s.title_id) );
@@ -491,7 +524,8 @@ PubSub.prototype.publish = function( topic, args ) {
 		fade = fade || false;
 
 		if ( s.mode === 'html' ) {
-			$('#wp-fullscreen-mode-bar').removeClass('wp-tmce-mode').addClass('wp-html-mode');
+			$('#wp-fullscreen-mode-bar').removeClass('wp-tmce-mode').addClass('wp-html-mode')
+				.find('a').removeClass( 'active' ).filter('.wp-fullscreen-mode-html').addClass( 'active' );
 
 			if ( fade )
 				$('#wp-fullscreen-button-bar').fadeOut( 150, function(){
@@ -501,7 +535,8 @@ PubSub.prototype.publish = function( topic, args ) {
 				$('#wp-fullscreen-button-bar').addClass('wp-html-mode');
 
 		} else if ( s.mode === 'tinymce' ) {
-			$('#wp-fullscreen-mode-bar').removeClass('wp-html-mode').addClass('wp-tmce-mode');
+			$('#wp-fullscreen-mode-bar').removeClass('wp-html-mode').addClass('wp-tmce-mode')
+				.find('a').removeClass( 'active' ).filter('.wp-fullscreen-mode-tinymce').addClass( 'active' );
 
 			if ( fade )
 				$('#wp-fullscreen-button-bar').fadeOut( 150, function(){
@@ -519,67 +554,95 @@ PubSub.prototype.publish = function( topic, args ) {
 	 */
 	api.ui = {
 		init: function() {
-			var topbar = $('#fullscreen-topbar'), txtarea = $('#wp_mce_fullscreen'), last = 0;
+			var toolbar;
 
-			s.toolbars = topbar.add( $('#wp-fullscreen-status') );
-			s.element = $('#fullscreen-fader');
-			s.textarea_obj = txtarea[0];
-			s.has_tinymce = typeof(tinymce) != 'undefined';
+			s.toolbar = toolbar = $('#fullscreen-topbar');
+			s.$fullscreenFader = $('#fullscreen-fader');
+			s.$statusbar = $('#wp-fullscreen-status');
+			s.hasTinymce = typeof tinymce !== 'undefined';
 
 			if ( !s.has_tinymce )
 				$('#wp-fullscreen-mode-bar').hide();
 
-			if ( wptitlehint && $('#wp-fullscreen-title').length )
-				wptitlehint('wp-fullscreen-title');
-
-			$(document).keyup(function(e){
-				var c = e.keyCode || e.charCode, a, data;
+			$document.keyup( function(e) {
+				var c = e.keyCode || e.charCode, modKey;
 
 				if ( !fullscreen.settings.visible )
 					return true;
 
-				if ( navigator.platform && navigator.platform.indexOf('Mac') != -1 )
-					a = e.ctrlKey; // Ctrl key for Mac
-				else
-					a = e.altKey; // Alt key for Win & Linux
-
-				if ( 27 == c ) { // Esc
-					data = {
-						event: e,
-						what: 'dfw',
-						cb: fullscreen.off,
-						condition: function(){
-							if ( $('#TB_window').is(':visible') || $('.wp-dialog').is(':visible') )
-								return false;
-							return true;
-						}
-					};
-
-					if ( ! jQuery(document).triggerHandler( 'wp_CloseOnEscape', [data] ) )
-						fullscreen.off();
+				if ( navigator.platform && navigator.platform.indexOf('Mac') !== -1 ) {
+					modKey = e.ctrlKey; // Ctrl key for Mac
+				} else {
+					modKey = e.altKey; // Alt key for Win & Linux
 				}
 
-				if ( a && (61 == c || 107 == c || 187 == c) ) { // +
-					api.dfw_width(25);
+				if ( modKey && ( 61 === c || 107 === c || 187 === c ) ) { // +
+					api.dfwWidth( 25 );
 					e.preventDefault();
 				}
 
-				if ( a && (45 == c || 109 == c || 189 == c) ) { // -
-					api.dfw_width(-25);
+				if ( modKey && ( 45 === c || 109 === c || 189 === c ) ) { // -
+					api.dfwWidth( -25 );
 					e.preventDefault();
 				}
 
-				if ( a && 48 == c ) { // 0
-					api.dfw_width(0);
+				if ( modKey && 48 === c ) { // 0
+					api.dfwWidth( 0 );
 					e.preventDefault();
 				}
 			});
 
-			// word count in Text mode
-			if ( typeof(wpWordCount) != 'undefined' ) {
+			$document.on( 'keydown.wp-fullscreen', function( event ) {
+				if ( 27 === event.which && s.visible ) { // Esc
+					api.off();
+					event.stopImmediatePropagation();
+				}
+			});
 
-				txtarea.keyup( function(e) {
-					var k = e.keyCode || e.charCode;
+			if ( 'ontouchstart' in window ) {
+				$body.addClass('wp-dfw-touch');
+			}
+
+			toolbar.on( 'mouseenter', function() {
+				toggleUI('show');
+			}).on( 'mouseleave', function() {
+				toggleUI('autohide');
+			});
+
+			// Bind buttons
+			$('#wp-fullscreen-buttons').on( 'click.wp-fullscreen', 'button', function( event ) {
+				var command = event.currentTarget.id ? event.currentTarget.id.substr(6) : null;
+
+				if ( s.editor && 'tinymce' === s.mode ) {
+					switch( command ) {
+						case 'bold':
+							s.editor.execCommand('Bold');
+							break;
+						case 'italic':
+							s.editor.execCommand('Italic');
+							break;
+						case 'bullist':
+							s.editor.execCommand('InsertUnorderedList');
+							break;
+						case 'numlist':
+							s.editor.execCommand('InsertOrderedList');
+							break;
+						case 'link':
+							s.editor.execCommand('WP_Link');
+							break;
+						case 'unlink':
+							s.editor.execCommand('unlink');
+							break;
+						case 'help':
+							s.editor.execCommand('WP_Help');
+							break;
+						case 'blockquote':
+							s.editor.execCommand('mceBlockQuote');
+							break;
+					}
+				} else if ( command === 'link' && window.wpLink ) {
+					window.wpLink.open();
+				}
 
 					if ( k == last )
 						return true;
@@ -710,14 +773,13 @@ PubSub.prototype.publish = function( topic, args ) {
 	 */
 
 	api.bind_resize = function() {
-		$(s.textarea_obj).bind('keypress.grow click.grow paste.grow', function(){
-			setTimeout( api.resize_textarea, 200 );
+		s.$dfwTextarea.on( 'keydown.wp-dfw-resize click.wp-dfw-resize paste.wp-dfw-resize', function() {
+			api.resizeTextarea();
 		});
 	};
 
-	api.oldheight = 0;
-	api.resize_textarea = function() {
-		var txt = s.textarea_obj, newheight;
+	api.resizeTextarea = function() {
+		var node = s.$dfwTextarea[0];
 
 		newheight = txt.scrollHeight > 300 ? txt.scrollHeight : 300;
 

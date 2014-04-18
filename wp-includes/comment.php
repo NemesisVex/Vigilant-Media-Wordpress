@@ -135,7 +135,6 @@ function get_approved_comments($post_id) {
  */
 function get_comment(&$comment, $output = OBJECT) {
 	global $wpdb;
-	$null = null;
 
 	if ( empty($comment) ) {
 		if ( isset($GLOBALS['comment']) )
@@ -151,7 +150,7 @@ function get_comment(&$comment, $output = OBJECT) {
 		} elseif ( ! $_comment = wp_cache_get($comment, 'comment') ) {
 			$_comment = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_ID = %d LIMIT 1", $comment));
 			if ( ! $_comment )
-				return $null;
+				return null;
 			wp_cache_add($_comment->comment_ID, $_comment, 'comment');
 		}
 	}
@@ -374,8 +373,13 @@ class WP_Comment_Query {
 		}
 		if ( '' !== $parent )
 			$where .= $wpdb->prepare( ' AND comment_parent = %d', $parent );
-		if ( '' !== $user_id )
+
+		if ( is_array( $user_id ) ) {
+			$where .= ' AND user_id IN (' . implode( ',', array_map( 'absint', $user_id ) ) . ')';
+		} elseif ( '' !== $user_id ) {
 			$where .= $wpdb->prepare( ' AND user_id = %d', $user_id );
+		}
+
 		if ( '' !== $search )
 			$where .= $this->get_search_sql( $search, array( 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_content' ) );
 
@@ -462,8 +466,6 @@ class WP_Comment_Query {
  * Comments have a limited set of valid status values, this provides the comment
  * status values and descriptions.
  *
- * @package WordPress
- * @subpackage Post
  * @since 2.7.0
  *
  * @return array List of comment statuses.
@@ -649,7 +651,7 @@ function get_comment_meta($comment_id, $key = '', $single = false) {
  * @param string $meta_key Metadata key.
  * @param mixed $meta_value Metadata value.
  * @param mixed $prev_value Optional. Previous value to check before removing.
- * @return bool True on success, false on failure.
+ * @return int|bool Meta ID if the key didn't exist, true on successful update, false on failure.
  */
 function update_comment_meta($comment_id, $meta_key, $meta_value, $prev_value = '') {
 	return update_metadata('comment', $comment_id, $meta_key, $meta_value, $prev_value);
@@ -917,7 +919,7 @@ function get_comment_pages_count( $comments = null, $per_page = null, $threaded 
 	if ( null === $comments && null === $per_page && null === $threaded && !empty($wp_query->max_num_comment_pages) )
 		return $wp_query->max_num_comment_pages;
 
-	if ( !$comments || !is_array($comments) )
+	if ( ( ! $comments || ! is_array( $comments ) ) && ! empty( $wp_query->comments )  )
 		$comments = $wp_query->comments;
 
 	if ( empty($comments) )
@@ -2373,8 +2375,6 @@ function xmlrpc_pingback_error( $ixr_error ) {
  * Removes comment ID from the comment cache.
  *
  * @since 2.3.0
- * @package WordPress
- * @subpackage Cache
  *
  * @param int|array $ids Comment ID or array of comment IDs to remove from cache
  */
@@ -2393,8 +2393,6 @@ function clean_comment_cache($ids) {
  * cache using the comment group with the key using the ID of the comments.
  *
  * @since 2.3.0
- * @package WordPress
- * @subpackage Cache
  *
  * @param array $comments Array of comment row objects
  */

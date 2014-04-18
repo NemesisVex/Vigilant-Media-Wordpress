@@ -13,8 +13,8 @@ window.switchEditors = {
 
 	// mode can be 'html', 'tmce', or 'toggle'; 'html' is used for the 'Text' editor tab.
 	go: function( id, mode ) {
-		var t = this, ed, wrap_id, txtarea_el,
-			dom = tinymce.DOM;
+		var t = this, ed, wrap_id, txtarea_el, iframe, editorHeight, toolbarHeight,
+			DOM = tinymce.DOM; //DOMUtils outside the editor iframe
 
 		id = id || 'content';
 		mode = mode || 'toggle';
@@ -29,6 +29,17 @@ window.switchEditors = {
 			} else {
 				mode = 'tmce';
 			}
+		}
+
+		function getToolbarHeight() {
+			var node = DOM.select( '.mce-toolbar-grp', ed.getContainer() )[0],
+				height = node && node.clientHeight;
+
+			if ( height && height > 10 && height < 200 ) {
+				return parseInt( height, 10 );
+			}
+
+			return 30;
 		}
 
 		if ( 'tmce' === mode || 'tinymce' === mode ) {
@@ -46,9 +57,18 @@ window.switchEditors = {
 
 			if ( ed ) {
 				ed.show();
+
+				if ( editorHeight ) {
+					toolbarHeight = getToolbarHeight();
+					editorHeight = editorHeight - toolbarHeight + 14;
+
+					// height cannot be under 50 or over 5000
+					if ( editorHeight > 50 && editorHeight < 5000 ) {
+						ed.theme.resizeTo( null, editorHeight );
+					}
+				}
 			} else {
-				ed = new tinymce.Editor( id, tinyMCEPreInit.mceInit[ id ] );
-				ed.render();
+				tinymce.init( tinyMCEPreInit.mceInit[id] );
 			}
 
 			dom.removeClass( wrap_id, 'html-active' );
@@ -62,6 +82,19 @@ window.switchEditors = {
 			}
 
 			if ( ed ) {
+				iframe = DOM.get( id + '_ifr' );
+				editorHeight = iframe ? parseInt( iframe.style.height, 10 ) : 0;
+
+				if ( editorHeight ) {
+					toolbarHeight = getToolbarHeight();
+					editorHeight = editorHeight + toolbarHeight - 14;
+
+					// height cannot be under 50 or over 5000
+					if ( editorHeight > 50 && editorHeight < 5000 ) {
+						txtarea_el.style.height = editorHeight + 'px';
+					}
+				}
+
 				ed.hide();
 			} else {
 				// The TinyMCE instance doesn't exist, run the content through 'pre_wpautop()' and show the textarea
@@ -163,9 +196,9 @@ window.switchEditors = {
 	_wp_Autop: function(pee) {
 		var preserve_linebreaks = false,
 			preserve_br = false,
-			blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select' +
-				'|option|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|noscript|legend|section' +
-				'|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary';
+			blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
+				'|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|noscript|legend|section' +
+				'|article|aside|hgroup|header|footer|nav|figure|details|menu|summary';
 
 		if ( pee.indexOf( '<object' ) !== -1 ) {
 			pee = pee.replace( /<object[\s\S]+?<\/object>/g, function( a ) {
