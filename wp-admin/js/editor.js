@@ -21,7 +21,7 @@ window.switchEditors = {
 
 		ed = tinymce.get( id );
 		wrap_id = 'wp-' + id + '-wrap';
-		txtarea_el = dom.get( id );
+		txtarea_el = DOM.get( id );
 
 		if ( 'toggle' === mode ) {
 			if ( ed && ! ed.isHidden() ) {
@@ -51,6 +51,8 @@ window.switchEditors = {
 				QTags.closeAllTags( id );
 			}
 
+			editorHeight = txtarea_el ? parseInt( txtarea_el.style.height, 10 ) : 0;
+
 			if ( tinyMCEPreInit.mceInit[ id ] && tinyMCEPreInit.mceInit[ id ].wpautop ) {
 				txtarea_el.value = t.wpautop( txtarea_el.value );
 			}
@@ -71,8 +73,8 @@ window.switchEditors = {
 				tinymce.init( tinyMCEPreInit.mceInit[id] );
 			}
 
-			dom.removeClass( wrap_id, 'html-active' );
-			dom.addClass( wrap_id, 'tmce-active' );
+			DOM.removeClass( wrap_id, 'html-active' );
+			DOM.addClass( wrap_id, 'tmce-active' );
 			setUserSetting( 'editor', 'tinymce' );
 
 		} else if ( 'html' === mode ) {
@@ -102,11 +104,11 @@ window.switchEditors = {
 					txtarea_el.value = t.pre_wpautop( txtarea_el.value );
 				}
 
-				dom.setStyles( txtarea_el, {'display': '', 'visibility': ''} );
+				DOM.setStyles( txtarea_el, {'display': '', 'visibility': ''} );
 			}
 
-			dom.removeClass( wrap_id, 'tmce-active' );
-			dom.addClass( wrap_id, 'html-active' );
+			DOM.removeClass( wrap_id, 'tmce-active' );
+			DOM.addClass( wrap_id, 'html-active' );
 			setUserSetting( 'editor', 'html' );
 		}
 		return false;
@@ -121,8 +123,9 @@ window.switchEditors = {
 		if ( content.indexOf( '<pre' ) !== -1 || content.indexOf( '<script' ) !== -1 ) {
 			preserve_linebreaks = true;
 			content = content.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function( a ) {
-				a = a.replace( /<br ?\/?>(\r\n|\n)?/g, '<wp-temp-lb>' );
-				return a.replace( /<\/?p( [^>]*)?>(\r\n|\n)?/g, '<wp-temp-lb>' );
+				a = a.replace( /<br ?\/?>(\r\n|\n)?/g, '<wp-line-break>' );
+				a = a.replace( /<\/?p( [^>]*)?>(\r\n|\n)?/g, '<wp-line-break>' );
+				return a.replace( /\r?\n/g, '<wp-line-break>' );
 			});
 		}
 
@@ -182,7 +185,7 @@ window.switchEditors = {
 
 		// put back the line breaks in pre|script
 		if ( preserve_linebreaks ) {
-			content = content.replace( /<wp-temp-lb>/g, '\n' );
+			content = content.replace( /<wp-line-break>/g, '\n' );
 		}
 
 		// and the <br> tags in captions
@@ -214,7 +217,7 @@ window.switchEditors = {
 		if ( pee.indexOf( '<pre' ) !== -1 || pee.indexOf( '<script' ) !== -1 ) {
 			preserve_linebreaks = true;
 			pee = pee.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function( a ) {
-				return a.replace( /(\r\n|\n)/g, '<wp-temp-lb>' );
+				return a.replace( /(\r\n|\n)/g, '<wp-line-break>' );
 			});
 		}
 
@@ -263,7 +266,7 @@ window.switchEditors = {
 
 		// put back the line breaks in pre|script
 		if ( preserve_linebreaks ) {
-			pee = pee.replace( /<wp-temp-lb>/g, '\n' );
+			pee = pee.replace( /<wp-line-break>/g, '\n' );
 		}
 
 		if ( preserve_br ) {

@@ -1353,8 +1353,6 @@ function wp_playlist_shortcode( $attr ) {
 		echo (int) $theme_width;
 	?>"<?php if ( 'video' === $safe_type ):
 		echo ' height="', (int) $theme_height, '"';
-	else:
-		echo ' style="visibility: hidden"';
 	endif; ?>></<?php echo $safe_type ?>>
 	<div class="wp-playlist-next"></div>
 	<div class="wp-playlist-prev"></div>
@@ -1557,7 +1555,7 @@ function wp_audio_shortcode( $attr, $content = '' ) {
 		'loop'     => $loop,
 		'autoplay' => $autoplay,
 		'preload'  => $preload,
-		'style'    => 'width: 100%; visibility: hidden;',
+		'style'    => 'width: 100%',
 	);
 
 	// These ones should just be omitted altogether if they are blank
@@ -2831,7 +2829,7 @@ function wp_enqueue_media( $args = array() ) {
 		'videoReplaceTitle'     => __( 'Replace Video' ),
 		'videoAddSourceTitle'   => __( 'Add Video Source' ),
 		'videoDetailsCancel'    => __( 'Cancel Edit' ),
-		'videoSelectPosterImageTitle' => __( 'Select Poster Image' ),
+		'videoSelectPosterImageTitle' => _( 'Select Poster Image' ),
 		'videoAddTrackTitle'	=> __( 'Add Subtitles' ),
 
  		// Playlist
