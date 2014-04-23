@@ -1,6 +1,14 @@
+/**
+ * Popup.js
+ *
+ * Copyright, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-// Uncomment and change this document.domain value if you are loading the script cross subdomains
-// document.domain = 'moxiecode.com';
+var tinymce, tinyMCE;
 
 /**
  * TinyMCE popup/dialog helper class. This gives you easy access to the

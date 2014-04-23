@@ -973,7 +973,7 @@
 			options = options || {};
 
 			id = this.id( id );
-
+/*
 			// Save a bookmark of the caret position in IE.
 			if ( ! _.isUndefined( window.tinymce ) ) {
 				editor = tinymce.get( id );
@@ -983,7 +983,7 @@
 					editor.windowManager.insertimagebookmark = editor.selection.getBookmark();
 				}
 			}
-
+*/
 			workflow = this.get( id );
 
 			// Redo workflow if state has changed
