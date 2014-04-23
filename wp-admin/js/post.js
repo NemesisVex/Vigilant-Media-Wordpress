@@ -1006,22 +1006,16 @@ jQuery(document).ready( function($) {
 			$handle = $('#post-status-info');
 
 		// No point for touch devices
-		if ( ! $textarea.length || 'ontouchstart' in window ) {
+		if ( !textarea.length || 'ontouchstart' in window )
 			return;
-		}
 
-		function dragging( event ) {
-			if ( mce ) {
-				editor.theme.resizeTo( null, offset + event.pageY );
-			} else {
-				$textarea.height( Math.max( 50, offset + event.pageY ) );
-			}
-
-			event.preventDefault();
+		function dragging(e) {
+			textarea.height( Math.max(50, offset + e.pageY) + 'px' );
+			return false;
 		}
 
 		function endDrag() {
-			var height, toolbarHeight;
+			var height;
 
 			if ( mce ) {
 				editor.focus();
@@ -1040,25 +1034,41 @@ jQuery(document).ready( function($) {
 			$document.off( '.wp-editor-resize' );
 
 			// sanity check
-			if ( height && height > 50 && height < 5000 ) {
+			if ( height && height > 50 && height < 5000 )
 				setUserSetting( 'ed_size', height );
-			}
 		}
 
-		$textarea.css( 'resize', 'none' );
+		textarea.css('resize', 'none');
+		el = $('<div id="content-resize-handle"><br></div>');
+		$('#wp-content-wrap').append(el);
+		el.on('mousedown', function(e) {
+			offset = textarea.height() - e.pageY;
+			textarea.blur();
+			$(document).mousemove(dragging).mouseup(endDrag);
+			return false;
+		});
+	})();
 
-		$handle.on( 'mousedown.wp-editor-resize', function( event ) {
-			if ( typeof tinymce !== 'undefined' ) {
-				editor = tinymce.get('content');
-			}
+	if ( typeof(tinymce) != 'undefined' ) {
+		tinymce.onAddEditor.add(function(mce, ed){
+			// iOS expands the iframe to full height and the user cannot adjust it.
+			if ( ed.id != 'content' || tinymce.isIOS5 )
+				return;
 
-			if ( editor && ! editor.isHidden() ) {
-				mce = true;
-				offset = $('#content_ifr').height() - event.pageY;
-			} else {
-				mce = false;
-				offset = $textarea.height() - event.pageY;
-				$textarea.blur();
+			function getHeight() {
+				var height, node = document.getElementById('content_ifr'),
+					ifr_height = node ? parseInt( node.style.height, 10 ) : 0,
+					tb_height = $('#content_tbl tr.mceFirst').height();
+
+				if ( !ifr_height || !tb_height )
+					return false;
+
+				// total height including toolbar and statusbar
+				height = ifr_height + tb_height + 21;
+				// textarea height = total height - 33px toolbar
+				height -= 33;
+
+				return height;
 			}
 
 			$document.on( 'mousemove.wp-editor-resize', dragging )
@@ -1068,7 +1078,6 @@ jQuery(document).ready( function($) {
 		}).on( 'mouseup.wp-editor-resize', endDrag );
 	})();
 
-	if ( typeof tinymce !== 'undefined' ) {
 		// When changing post formats, change the editor body class
 		$( '#post-formats-select input.post-format' ).on( 'change.set-editor-class', function() {
 			var editor, body, format = this.id;

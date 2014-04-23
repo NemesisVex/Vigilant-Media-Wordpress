@@ -134,7 +134,7 @@ function dismissed_updates() {
 /**
  * Display upgrade WordPress for downloading latest or upgrading automatically form.
  *
- * @since 2.7.0
+ * @since 2.7
  *
  * @return null
  */
@@ -354,7 +354,7 @@ function list_translation_updates() {
 /**
  * Upgrade WordPress core display.
  *
- * @since 2.7.0
+ * @since 2.7
  *
  * @return null
  */
@@ -522,12 +522,7 @@ if ( 'upgrade-core' == $action ) {
 	if ( $core || $plugins || $themes )
 		list_translation_updates();
 	unset( $core, $plugins, $themes );
-	/**
-	 * Fires after the core, plugin, and theme update tables.
-	 *
-	 * @since 2.9.0
-	 */
-	do_action( 'core_upgrade_preamble' );
+	do_action('core_upgrade_preamble');
 	echo '</div>';
 	include(ABSPATH . 'wp-admin/admin-footer.php');
 
@@ -633,14 +628,5 @@ if ( 'upgrade-core' == $action ) {
 	require_once( ABSPATH . 'wp-admin/admin-footer.php' );
 
 } else {
-	/**
-	 * Fires for each custom update action on the WordPress Updates screen.
-	 *
-	 * The dynamic portion of the hook name, $action, refers to the
-	 * passed update action. The hook fires in lieu of all available
-	 * default update actions.
-	 *
-	 * @since 3.2.0
-	 */
-	do_action( "update-core-custom_{$action}" );
+	do_action('update-core-custom_' . $action);
 }

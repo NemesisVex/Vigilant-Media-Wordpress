@@ -1,5 +1,6 @@
 /* global adminCommentsL10n, thousandsSeparator, list_args, QTags, ajaxurl, wpAjax */
-var setCommentsList, theList, theExtraList, commentReply;
+var setCommentsList, theList, theExtraList, commentReply,
+	toggleWithKeyboard = false;
 
 (function($) {
 var getCount, updateCount, updatePending;
@@ -570,7 +571,9 @@ $(document).ready(function(){
 		};
 
 		toggle_all = function() {
-			$('#cb-select-all-1').data( 'wp-toggle', 1 ).trigger( 'click' ).removeData( 'wp-toggle' );
+			toggleWithKeyboard = true;
+			$('input:checkbox', '#cb').click().prop('checked', false);
+			toggleWithKeyboard = false;
 		};
 
 		make_bulk = function(value) {

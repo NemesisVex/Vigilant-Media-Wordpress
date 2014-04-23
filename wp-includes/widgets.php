@@ -19,7 +19,7 @@
  *
  * @package WordPress
  * @subpackage Widgets
- * @since 2.8.0
+ * @since 2.8
  */
 class WP_Widget {
 
@@ -400,7 +400,7 @@ class WP_Widget {
  *
  * @package WordPress
  * @subpackage Widgets
- * @since 2.8.0
+ * @since 2.8
  */
 class WP_Widget_Factory {
 	var $widgets = array();
@@ -1183,7 +1183,7 @@ function is_dynamic_sidebar() {
 /**
  * Whether a sidebar is in use.
  *
- * @since 2.8.0
+ * @since 2.8
  *
  * @param mixed $index Sidebar name, id or number to check.
  * @return bool true if the sidebar is in use, false otherwise.
@@ -1344,7 +1344,7 @@ function wp_convert_widget_settings($base_name, $option_name, $settings) {
 /**
  * Output an arbitrary widget as a template tag.
  *
- * @since 2.8.0
+ * @since 2.8
  *
  * @param string $widget the widget's PHP class name (see default-widgets.php)
  * @param array $instance the widget's instance settings

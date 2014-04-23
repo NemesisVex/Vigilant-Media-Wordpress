@@ -1,4 +1,4 @@
-/* global ajaxurl, tinymce, wpLinkL10n, setUserSetting, wpActiveEditor */
+/* global ajaxurl, tinymce, wpLinkL10n, tinyMCEPopup, setUserSetting, wpActiveEditor */
 var wpLink;
 
 ( function( $ ) {
@@ -72,8 +72,7 @@ var wpLink;
 
 			this.textarea = $( '#' + window.wpActiveEditor ).get( 0 );
 
-			if ( typeof tinymce !== 'undefined' ) {
-				ed = tinymce.get( wpActiveEditor );
+			this.textarea = $('#'+wpActiveEditor).get(0);
 
 				if ( ed && ! ed.isHidden() ) {
 					editor = ed;
@@ -120,8 +119,11 @@ var wpLink;
 				rivers.recent.ajax();
 		},
 
-		mceRefresh: function() {
+		mceRefresh : function() {
 			var e;
+			ed = tinyMCEPopup.editor;
+
+			tinyMCEPopup.restoreSelection();
 
 			// If link exists, select proper values.
 			if ( e = editor.dom.getParent( editor.selection.getNode(), 'A' ) ) {
@@ -142,7 +144,6 @@ var wpLink;
 		close: function() {
 			if ( ! wpLink.isMCE() ) {
 				wpLink.textarea.focus();
-
 				if ( wpLink.range ) {
 					wpLink.range.moveToBookmark( wpLink.range.getBookmark() );
 					wpLink.range.select();
@@ -155,7 +156,7 @@ var wpLink;
 			inputs.wrap.hide();
 		},
 
-		getAttrs: function() {
+		getAttrs : function() {
 			return {
 				href: inputs.url.val(),
 				title: inputs.title.val(),
@@ -163,7 +164,7 @@ var wpLink;
 			};
 		},
 
-		update: function() {
+		update : function() {
 			if ( wpLink.isMCE() )
 				wpLink.mceUpdate();
 			else
@@ -266,8 +267,7 @@ var wpLink;
 			if ( originalEvent && originalEvent.type == 'click' )
 				inputs.url.focus();
 		},
-
-		setDefaultValues: function() {
+		setDefaultValues : function() {
 			// Set URL and description to defaults.
 			// Leave the new tab setting as-is.
 			inputs.url.val( 'http://' );
@@ -302,12 +302,11 @@ var wpLink;
 			}
 		},
 
-		next: function() {
+		next : function() {
 			rivers.search.next();
 			rivers.recent.next();
 		},
-
-		prev: function() {
+		prev : function() {
 			rivers.search.prev();
 			rivers.recent.prev();
 		},
@@ -351,7 +350,7 @@ var wpLink;
 			}
 		},
 
-		delayedCallback: function( func, delay ) {
+		delayedCallback : function( func, delay ) {
 			var timeoutTriggered, funcTriggered, funcArgs, funcContext;
 
 			if ( ! delay )

@@ -138,7 +138,7 @@ function comment_author_email_link( $linktext = '', $before = '', $after = '' ) 
  *
  * @global object $comment The current Comment row object.
  *
- * @since 2.7.0
+ * @since 2.7
  *
  * @param string $linktext Optional. Text to display instead of the comment author's email address.
  *                         Default empty.

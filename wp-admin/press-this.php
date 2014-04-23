@@ -293,7 +293,6 @@ die;
 
 	wp_enqueue_style( 'colors' );
 	wp_enqueue_script( 'post' );
-	add_thickbox();
 	_wp_admin_html_begin();
 ?>
 <title><?php _e('Press This') ?></title>

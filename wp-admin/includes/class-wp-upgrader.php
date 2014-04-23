@@ -2532,9 +2532,8 @@ Thanks! -- The WordPress Team" );
 			$subject = sprintf( __( '[%s] Background updates have finished' ), $site_title );
 		}
 
-		$title = __( 'UPDATE LOG' );
-		$body[] = $title;
-		$body[] = str_repeat( '=', strlen( $title ) );
+		$body[] = __( 'UPDATE LOG' );
+		$body[] = '==========';
 		$body[] = '';
 
 		foreach ( array( 'core', 'plugin', 'theme', 'translation' ) as $type ) {
