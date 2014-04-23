@@ -16,7 +16,7 @@
  *
  * @package WordPress
  * @subpackage Plugin
- * @since 1.5
+ * @since 1.5.0
  */
 
 // Initialize the filter globals.
@@ -290,7 +290,7 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 ) {
 /**
  * Remove all of the hooks from a filter.
  *
- * @since 2.7
+ * @since 2.7.0
  *
  * @param string $tag The filter to remove hooks from.
  * @param int $priority The priority number to remove.
@@ -589,7 +589,7 @@ function remove_action( $tag, $function_to_remove, $priority = 10 ) {
 /**
  * Remove all of the hooks from an action.
  *
- * @since 2.7
+ * @since 2.7.0
  *
  * @param string $tag The action to remove hooks from.
  * @param int $priority The priority number to remove them from.
@@ -760,7 +760,7 @@ function register_deactivation_hook($file, $function) {
  * should always check for the 'WP_UNINSTALL_PLUGIN' constant, before
  * executing.
  *
- * @since 2.7
+ * @since 2.7.0
  *
  * @param string $file
  * @param callback $callback The callback to run when the hook is called. Must be a static method or function.

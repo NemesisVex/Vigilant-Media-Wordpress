@@ -183,7 +183,7 @@ class Custom_Image_Header {
 	/**
 	 * Set up the enqueue for the CSS files
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	function css_includes() {
 		$step = $this->step();
@@ -459,7 +459,7 @@ class Custom_Image_Header {
 ?>
 
 <div class="wrap">
-<h2><?php _e('Custom Header'); ?></h2>
+<h2><?php _e( 'Custom Header' ); ?></h2>
 
 <?php if ( ! empty( $this->updated ) ) { ?>
 <div id="message" class="updated">
@@ -476,8 +476,9 @@ class Custom_Image_Header {
 <tr>
 <th scope="row"><?php _e( 'Preview' ); ?></th>
 <td>
-	<?php if ( $this->admin_image_div_callback ) {
-	  call_user_func( $this->admin_image_div_callback );
+	<?php
+	if ( $this->admin_image_div_callback ) {
+		call_user_func( $this->admin_image_div_callback );
 	} else {
 		$custom_header = get_custom_header();
 		$header_image_style = 'background-image:url(' . esc_url( get_header_image() ) . ');';

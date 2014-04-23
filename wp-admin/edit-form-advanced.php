@@ -510,6 +510,7 @@ if ( post_type_supports($post_type, 'editor') ) {
 		echo '</span>';
 	} ?>
 	</td>
+	<td id="content-resize-handle" class="hide-if-no-js"><br /></td>
 </tr></tbody></table>
 
 </div>
