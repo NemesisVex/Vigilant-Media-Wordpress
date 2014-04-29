@@ -59,7 +59,7 @@
 						</button>
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="navbar-brand"><?php bloginfo( 'name' ); ?></a>
 					</div>
-					<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container_id' => 'bs-nav', 'menu_class' => 'nav navbar-nav', 'fallback_cb' => 'vigilantmedia2014_page_menu' ) ); ?>
+					<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container_id' => 'bs-nav', 'container_class' => 'collapse navbar-collapse', 'menu_class' => 'nav navbar-nav', 'fallback_cb' => 'vigilantmedia2014_page_menu' ) ); ?>
 				</div>
 			</nav>
 		</div>
