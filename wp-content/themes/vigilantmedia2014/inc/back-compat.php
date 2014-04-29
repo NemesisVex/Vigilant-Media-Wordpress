@@ -7,8 +7,8 @@
  * and relies on many newer functions and markup changes introduced in 3.6.
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 /**
@@ -16,7 +16,7 @@
  *
  * Switches to the default theme.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_switch_theme() {
 	switch_theme( WP_DEFAULT_THEME, WP_DEFAULT_THEME );
@@ -31,7 +31,7 @@ add_action( 'after_switch_theme', 'vigilantmedia2014_switch_theme' );
  * Prints an update nag after an unsuccessful attempt to switch to
  * Twenty Fourteen on WordPress versions prior to 3.6.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_upgrade_notice() {
 	$message = sprintf( __( 'Twenty Fourteen requires at least WordPress version 3.6. You are running version %s. Please upgrade and try again.', 'musicwhore2014' ), $GLOBALS['wp_version'] );
@@ -41,7 +41,7 @@ function vigilantmedia2014_upgrade_notice() {
 /**
  * Prevent the Theme Customizer from being loaded on WordPress versions prior to 3.6.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_customize() {
 	wp_die( sprintf( __( 'Twenty Fourteen requires at least WordPress version 3.6. You are running version %s. Please upgrade and try again.', 'musicwhore2014' ), $GLOBALS['wp_version'] ), '', array(
@@ -53,7 +53,7 @@ add_action( 'load-customize.php', 'vigilantmedia2014_customize' );
 /**
  * Prevent the Theme Preview from being loaded on WordPress versions prior to 3.4.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_preview() {
 	if ( isset( $_GET['preview'] ) ) {

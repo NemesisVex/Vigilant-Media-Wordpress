@@ -5,8 +5,8 @@
  * The area of the page that contains comments and the comment form.
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 /*

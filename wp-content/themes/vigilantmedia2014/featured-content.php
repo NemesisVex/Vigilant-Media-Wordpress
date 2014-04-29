@@ -3,8 +3,8 @@
  * The template for displaying featured content
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 ?>
 
@@ -14,7 +14,7 @@
 		/**
 		 * Fires before the Twenty Fourteen featured content.
 		 *
-		 * @since Musicwhore2014 1.0
+		 * @subpackage VigilantMedia2014 1.0
 		 */
 		do_action( 'vigilantmedia2014_featured_posts_before' );
 
@@ -29,7 +29,7 @@
 		/**
 		 * Fires after the Twenty Fourteen featured content.
 		 *
-		 * @since Musicwhore2014 1.0
+		 * @subpackage VigilantMedia2014 1.0
 		 */
 		do_action( 'vigilantmedia2014_featured_posts_after' );
 

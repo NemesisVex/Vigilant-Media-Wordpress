@@ -12,8 +12,8 @@
  * @link http://codex.wordpress.org/Template_Hierarchy
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 get_header(); ?>

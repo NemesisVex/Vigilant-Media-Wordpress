@@ -3,14 +3,14 @@
  * Twenty Fourteen Theme Customizer support
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 /**
  * Implement Theme Customizer additions and adjustments.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @param WP_Customize_Manager $wp_customize Theme Customizer object.
  */
@@ -61,7 +61,7 @@ add_action( 'customize_register', 'vigilantmedia2014_customize_register' );
 /**
  * Sanitize the Featured Content layout value.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @param string $layout Layout type.
  * @return string Filtered layout type (grid|slider).
@@ -77,7 +77,7 @@ function vigilantmedia2014_sanitize_layout( $layout ) {
 /**
  * Bind JS handlers to make Theme Customizer preview reload changes asynchronously.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_customize_preview_js() {
 	wp_enqueue_script( 'vigilantmedia2014_customizer', get_template_directory_uri() . '/js/customizer.js', array( 'customize-preview' ), '20131205', true );
@@ -87,7 +87,7 @@ add_action( 'customize_preview_init', 'vigilantmedia2014_customize_preview_js' )
 /**
  * Add contextual help to the Themes and Post edit screens.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_contextual_help() {
 	if ( 'admin_head-edit.php' === current_filter() && 'post' !== $GLOBALS['typenow'] ) {

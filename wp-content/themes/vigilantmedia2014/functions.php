@@ -21,8 +21,8 @@
  * @link http://codex.wordpress.org/Plugin_API
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 /**
@@ -30,7 +30,7 @@
  *
  * @see vigilantmedia2014_content_width()
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 if ( ! isset( $content_width ) ) {
 	$content_width = 474;
@@ -53,7 +53,7 @@ if ( ! function_exists( 'vigilantmedia2014_setup' ) ) :
  * runs before the init hook. The init hook is too late for some features, such
  * as indicating support post thumbnails.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_setup() {
 
@@ -120,7 +120,7 @@ add_action( 'after_setup_theme', 'vigilantmedia2014_setup' );
 /**
  * Adjust content_width value for image attachment template.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_content_width() {
 	if ( is_attachment() && wp_attachment_is_image() ) {
@@ -132,7 +132,7 @@ add_action( 'template_redirect', 'vigilantmedia2014_content_width' );
 /**
  * Getter function for Featured Content Plugin.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @return array An array of WP_Post objects.
  */
@@ -140,7 +140,7 @@ function vigilantmedia2014_get_featured_posts() {
 	/**
 	 * Filter the featured posts to return in Twenty Fourteen.
 	 *
-	 * @since Musicwhore2014 1.0
+	 * @subpackage VigilantMedia2014 1.0
 	 *
 	 * @param array|bool $posts Array of featured posts, otherwise false.
 	 */
@@ -150,7 +150,7 @@ function vigilantmedia2014_get_featured_posts() {
 /**
  * A helper conditional function that returns a boolean value.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @return bool Whether there are featured posts.
  */
@@ -161,7 +161,7 @@ function vigilantmedia2014_has_featured_posts() {
 /**
  * Register three Twenty Fourteen widget areas.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_widgets_init() {
 	require get_template_directory() . '/inc/widgets.php';
@@ -200,7 +200,7 @@ add_action( 'widgets_init', 'vigilantmedia2014_widgets_init' );
 /**
  * Register Lato Google font for Twenty Fourteen.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @return string
  */
@@ -220,7 +220,7 @@ function vigilantmedia2014_font_url() {
 /**
  * Enqueue scripts and styles for the front end.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_scripts() {
 	// Add Lato font, used in the main stylesheet.
@@ -263,7 +263,7 @@ add_action( 'wp_enqueue_scripts', 'vigilantmedia2014_scripts' );
 /**
  * Enqueue Google fonts style to admin screen for custom header display.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_admin_fonts() {
 	wp_enqueue_style( 'vigilantmedia2014-lato', vigilantmedia2014_font_url(), array(), null );
@@ -274,14 +274,14 @@ if ( ! function_exists( 'vigilantmedia2014_the_attached_image' ) ) :
 /**
  * Print the attached image with a link to the next attached image.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_the_attached_image() {
 	$post                = get_post();
 	/**
 	 * Filter the default Twenty Fourteen attachment size.
 	 *
-	 * @since Musicwhore2014 1.0
+	 * @subpackage VigilantMedia2014 1.0
 	 *
 	 * @param array $dimensions {
 	 *     An array of height and width dimensions.
@@ -341,7 +341,7 @@ if ( ! function_exists( 'vigilantmedia2014_list_authors' ) ) :
 /**
  * Print a list of all site contributors who published at least one post.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_list_authors() {
 	$contributor_ids = get_users( array(
@@ -392,7 +392,7 @@ endif;
  * 6. Single views.
  * 7. Featured content layout.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @param array $classes A list of existing body class values.
  * @return array The filtered body class list.
@@ -443,7 +443,7 @@ add_filter( 'body_class', 'vigilantmedia2014_body_classes' );
  * Adds a post class to denote:
  * Non-password protected page with a post thumbnail.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @param array $classes A list of existing post class values.
  * @return array The filtered post class list.
@@ -461,7 +461,7 @@ add_filter( 'post_class', 'vigilantmedia2014_post_classes' );
  * Create a nicely formatted and more specific title element text for output
  * in head of document, based on current view.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @param string $title Default title text for current view.
  * @param string $sep Optional separator.

@@ -3,14 +3,14 @@
  * Implement Custom Header functionality for Twenty Fourteen
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 /**
  * Set up the WordPress core custom header settings.
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  *
  * @uses vigilantmedia2014_header_style()
  * @uses vigilantmedia2014_admin_header_style()
@@ -20,7 +20,7 @@ function vigilantmedia2014_custom_header_setup() {
 	/**
 	 * Filter Twenty Fourteen custom-header support arguments.
 	 *
-	 * @since Musicwhore2014 1.0
+	 * @subpackage VigilantMedia2014 1.0
 	 *
 	 * @param array $args {
 	 *     An array of custom-header support arguments.
@@ -94,7 +94,7 @@ if ( ! function_exists( 'vigilantmedia2014_admin_header_style' ) ) :
  *
  * @see vigilantmedia2014_custom_header_setup()
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_admin_header_style() {
 ?>
@@ -129,7 +129,7 @@ if ( ! function_exists( 'vigilantmedia2014_admin_header_image' ) ) :
  *
  * @see vigilantmedia2014_custom_header_setup()
  *
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014 1.0
  */
 function vigilantmedia2014_admin_header_image() {
 ?>

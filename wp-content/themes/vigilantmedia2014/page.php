@@ -7,8 +7,8 @@
  * other 'pages' on your WordPress site will use a different template.
  *
  * @package WordPress
- * @subpackage Musicwhore2014
- * @since Musicwhore2014 1.0
+ * @subpackage VigilantMedia2014
+ * @subpackage VigilantMedia2014 1.0
  */
 
 get_header(); ?>
