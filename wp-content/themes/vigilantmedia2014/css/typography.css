@@ -1,0 +1,86 @@
+/*
+    Document   : typography
+    Created on : May 7, 2012, 6:45:21 PM
+    Author     : Greg Bueno
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+@font-face {
+	font-family: "Novecentowide";
+	src: url("fonts/Novecentowide-Bold-webfont.eot");
+	src: url("fonts/Novecentowide-Bold-webfont.eot?iefix") format("eot"),
+		url("fonts/Novecentowide-Bold-webfont.woff") format("woff"),
+		url("fonts/Novecentowide-Bold-webfont.ttf") format("truetype"),
+		url("fonts/Novecentowide-Bold-webfont.svg#webfont") format("svg");
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Novecentowide";
+	src: url("fonts/Novecentowide-Book-webfont.eot");
+	src: url("fonts/Novecentowide-Book-webfont.eot?iefix") format("eot"),
+		url("fonts/Novecentowide-Book-webfont.woff") format("woff"),
+		url("fonts/Novecentowide-Book-webfont.ttf") format("truetype"),
+		url("fonts/Novecentowide-Book-webfont.svg#webfont") format("svg");
+}
+
+body {
+}
+
+.navbar-default .navbar-brand {
+	font-family: Novecentowide, Helvetica, Arial, sans-serif;
+	font-size: 36px;
+	color: #FFF;
+}
+
+.navbar-default .navbar-brand:hover {
+	color: #FFF;
+}
+
+.navbar-default .navbar-nav>li>a {
+	color: #FFF;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+	color: #FFF;
+	text-decoration: underline;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #DDD;
+}
+
+.navbar-default .navbar-toggle:hover {
+	background-color: #AAA;
+}
+
+h1.site-title a {
+}
+
+h1.site-title a:hover {
+}
+
+h1.site-title small {
+}
+
+h3.widget-title {
+	font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
+	text-transform: uppercase;
+	font-size: 18px;
+}
+
+h3.entry-title {
+	font-family: Bitter, Times, serif;
+}
+
+h3.entry-title a {
+}
+
+.entry-meta {
+}
+
+.entry-content {
+}
+
+.comment-metadata {
+}
