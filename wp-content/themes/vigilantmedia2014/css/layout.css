@@ -1,0 +1,9 @@
+.navbar-default {
+	background-color: #8B99B9;
+	background-image: linear-gradient(bottom, rgb(102, 127, 128), rgb(139, 153, 185) 25px);
+	background-image: -o-linear-gradient(bottom, rgb(102, 127, 128), rgb(139, 153, 185) 25px);
+	background-image: -moz-linear-gradient(bottom, rgb(102, 127, 128), rgb(139, 153, 185) 25px);
+	background-image: -webkit-linear-gradient(top, rgb(102,127,128), rgb(139, 153, 185) 25px);
+	background-image: -ms-linear-gradient(bottom, rgb(102, 127, 128), rgb(139, 153, 185) 25px);
+}
+
