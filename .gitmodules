@@ -1,0 +1,6 @@
+[submodule "wp-content/themes/vigilantmedia2014"]
+	path = wp-content/themes/vigilantmedia2014
+	url = git@bitbucket.org:NemesisVex/vigilant-media-2014-theme-for-wordpress.git
+[submodule "wp-content/themes/vigilantmedia"]
+	path = wp-content/themes/vigilantmedia
+	url = git@bitbucket.org:NemesisVex/vigilant-media-2012-theme-for-wordpress.git
