@@ -2,6 +2,7 @@ environment.php
 configuration.php
 wp-config.php
 wp-content/blogs.dir/
+wp-content/plugins/bootstrap-overrides/
 wp-content/uploads/
 wp-content/themes/vigilantmedia/
 wp-content/themes/vigilantmedia2014/
