@@ -1,15 +1,12 @@
-Vigilant Media Wordpress
-========================
+# Vigilant Media Wordpress
 
 Vigilant Media Wordpress is the Wordpress installation that powers Bitwise Dilletante.
 
-History
--------
+## History
 
 Bitwise Dilletante is a personal blog focused on web development and technology.
 
-About this repository
----------------------
+## About this repository
 
 The repository contains the full installation of Wordpress alongside third-party plugins and my own customizations (themes, plugins, etc.).
 
@@ -17,8 +14,7 @@ Content of the uploads directory is excluded, as well as the ``wp-config.php`` f
 
 Updates to Wordpress are pulled from the Wordpress Github repo and pushed here. Plugin updates are also reflected in this repo.
 
-Third-party plugins
-===================
+### Third-party plugins
 
 The following third-party plugins have been installed for this instance of WordPress:
 
@@ -27,11 +23,8 @@ The following third-party plugins have been installed for this instance of WordP
 * Jetpack
 * WordPress Importer
 
-Customizations
---------------
+## Customizations
 
-Bootstrap Overrides
-~~~~~~~~~~~~~~~~~~~
+### Bootstrap Overrides
 
-Bootstrap Overrides allow comment forms and pagination links to use Bootstrap styles.
-
+[Bootstrap Overrides](https://bitbucket.org/NemesisVex/bootstrap-overrides-for-wordpress) allow comment forms and pagination links to use Bootstrap styles.
