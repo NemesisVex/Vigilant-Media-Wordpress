@@ -26,8 +26,10 @@ AuthGroupFile /dev/null
 AuthUserFile /home/nemesisv/.htpasswd
 AuthName "Vigilant Media WordPress development site"
 
-<RequireAny>
-  Require env noauth
-  Require valid-user
-</RequireAny>
+<IfModule mod_authz_core.c>
+    <RequireAny>
+        Require env noauth
+        Require valid-user
+    </RequireAny>
+</IfModule>
 #END WordPress
