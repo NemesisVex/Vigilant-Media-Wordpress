@@ -19,7 +19,7 @@ RewriteRule . index.php [L]
 
 ErrorDocument 401 default
 
-SetEnvIf Host "blog\.vigilantmedia\.com" noauth=1
+SetEnvIf Host "^blog\.vigilantmedia\.com" noauth=1
 
 AuthType Basic
 AuthGroupFile /dev/null
